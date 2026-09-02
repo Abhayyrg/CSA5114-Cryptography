@@ -1,0 +1,240 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard | DH Key Exchange & MITM Attack Protection{% endblock %}
+
+{% block content %}
+<div class="row align-items-center mb-4">
+  <div class="col-lg-8">
+    <div class="d-flex align-items-center gap-2 mb-2">
+      <span class="badge badge-cyber badge-cyan"><i class="bi bi-cpu me-1"></i> Cryptographic Evaluation</span>
+      <span class="badge badge-cyber badge-emerald"><i class="bi bi-check2-circle me-1"></i> Interactive Lab</span>
+    </div>
+    <h1 class="display-6 fw-bold text-white mb-1">
+      Diffie–Hellman Key Exchange & MITM Attack Protection
+    </h1>
+    <p class="lead text-muted mb-0">
+      Interactive Network Security Demonstration & Architectural Evaluation
+    </p>
+  </div>
+  <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+    <a href="{{ url_for('dh_page') }}" class="btn btn-cyber btn-cyber-cyan me-2">
+      <i class="bi bi-play-circle-fill"></i> Start Simulation
+    </a>
+    <a href="{{ url_for('about_page') }}" class="btn btn-cyber btn-cyber-outline">
+      <i class="bi bi-journal-code"></i> Project Info
+    </a>
+  </div>
+</div>
+
+<!-- Network Interception Architecture Concept Diagram -->
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="cyber-card p-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="card-title-cyber mb-0">
+          <i class="bi bi-diagram-3 text-info"></i> Core Vulnerability Overview: Unauthenticated Key Exchange
+        </h5>
+        <span class="badge badge-cyber badge-amber">Public Channel Threat Model</span>
+      </div>
+      
+      <div class="row g-4 text-center">
+        <!-- Normal Channel Flow -->
+        <div class="col-lg-6">
+          <div class="p-3 rounded" style="background: rgba(10, 16, 31, 0.7); border: 1px solid rgba(0, 240, 255, 0.2);">
+            <div class="fw-bold text-info mb-2"><i class="bi bi-shield me-1"></i> Intended Communication Path</div>
+            <div class="d-flex align-items-center justify-content-center gap-2 py-3 flex-wrap">
+              <div class="badge badge-cyber badge-cyan py-2 px-3 fs-6">
+                <i class="bi bi-person-fill"></i> Alice
+              </div>
+              <i class="bi bi-arrow-right text-info fs-4"></i>
+              <div class="badge bg-secondary py-2 px-3 text-white fs-6">
+                <i class="bi bi-globe"></i> Insecure Internet
+              </div>
+              <i class="bi bi-arrow-right text-info fs-4"></i>
+              <div class="badge badge-cyber badge-emerald py-2 px-3 fs-6">
+                <i class="bi bi-person-fill"></i> Bob
+              </div>
+            </div>
+            <small class="text-muted">Alice and Bob calculate $K = g^{ab} \pmod p$. Both assume the public values arrived untouched.</small>
+          </div>
+        </div>
+
+        <!-- MITM Interception Flow -->
+        <div class="col-lg-6">
+          <div class="p-3 rounded" style="background: rgba(30, 15, 25, 0.7); border: 1px solid rgba(244, 63, 94, 0.3);">
+            <div class="fw-bold text-danger mb-2"><i class="bi bi-exclamation-triangle-fill me-1"></i> Active MITM Interception Path</div>
+            <div class="d-flex align-items-center justify-content-center gap-2 py-3 flex-wrap">
+              <div class="badge badge-cyber badge-cyan py-2 px-3 fs-6">
+                <i class="bi bi-person-fill"></i> Alice
+              </div>
+              <i class="bi bi-arrow-right text-danger fs-4"></i>
+              <div class="badge badge-cyber badge-crimson py-2 px-3 fs-6">
+                <i class="bi bi-incognito"></i> Eve (Attacker)
+              </div>
+              <i class="bi bi-arrow-right text-danger fs-4"></i>
+              <div class="badge badge-cyber badge-emerald py-2 px-3 fs-6">
+                <i class="bi bi-person-fill"></i> Bob
+              </div>
+            </div>
+            <small class="text-danger">Eve intercepts public values, substitutes her own, and establishes <strong>two separate secrets</strong>.</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Primary Interactive Demonstration Cards -->
+<div class="row g-4 mb-4">
+  <!-- Card 1: Normal Diffie-Hellman -->
+  <div class="col-md-6 col-xl-4">
+    <div class="cyber-card p-4 h-100 d-flex flex-column">
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div class="entity-avatar" style="background: rgba(0, 240, 255, 0.1); color: var(--cyber-cyan); border: 1px solid rgba(0, 240, 255, 0.3);">
+          <i class="bi bi-key-fill"></i>
+        </div>
+        <span class="badge badge-cyber badge-cyan">Module 01</span>
+      </div>
+      <h5 class="card-title-cyber mb-2">Diffie–Hellman Exchange</h5>
+      <p class="text-muted flex-grow-1 small">
+        Explore mathematical step-by-step key establishment ($g^a \bmod p$, $g^b \bmod p$). Generate custom parameters or auto-presets and verify shared secret equivalence ($K_A = K_B$).
+      </p>
+      <a href="{{ url_for('dh_page') }}" class="btn btn-cyber btn-cyber-outline mt-2 w-100">
+        Launch DH Simulation <i class="bi bi-arrow-right ms-auto"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Card 2: MITM Attack Simulation -->
+  <div class="col-md-6 col-xl-4">
+    <div class="cyber-card p-4 h-100 d-flex flex-column" style="border-color: rgba(244, 63, 94, 0.3);">
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div class="entity-avatar" style="background: rgba(244, 63, 94, 0.15); color: var(--cyber-crimson); border: 1px solid rgba(244, 63, 94, 0.4);">
+          <i class="bi bi-incognito"></i>
+        </div>
+        <span class="badge badge-cyber badge-crimson">Module 02</span>
+      </div>
+      <h5 class="card-title-cyber mb-2 text-danger">MITM Attack</h5>
+      <p class="text-muted flex-grow-1 small">
+        Observe Eve actively intercepting public values ($A$ and $B$) and substituting malicious values ($A_E$ and $B_E$). Live demonstration of message eavesdropping and tampering.
+      </p>
+      <a href="{{ url_for('mitm_page') }}" class="btn btn-cyber btn-cyber-crimson mt-2 w-100">
+        Simulate Attack <i class="bi bi-arrow-right ms-auto"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Card 3: Attack Detection -->
+  <div class="col-md-6 col-xl-4">
+    <div class="cyber-card p-4 h-100 d-flex flex-column">
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div class="entity-avatar" style="background: rgba(245, 158, 11, 0.15); color: var(--cyber-amber); border: 1px solid rgba(245, 158, 11, 0.4);">
+          <i class="bi bi-fingerprint"></i>
+        </div>
+        <span class="badge badge-cyber badge-amber">Module 03</span>
+      </div>
+      <h5 class="card-title-cyber mb-2">Attack Detection</h5>
+      <p class="text-muted flex-grow-1 small">
+        Learn how cryptographic fingerprints, out-of-band verification, public-key verification, and PKI detect active parameter modification before communication is compromised.
+      </p>
+      <a href="{{ url_for('detection_page') }}" class="btn btn-cyber btn-cyber-outline mt-2 w-100">
+        Explore Detection <i class="bi bi-arrow-right ms-auto"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Card 4: Authentication & Digital Signatures -->
+  <div class="col-md-6 col-xl-4">
+    <div class="cyber-card p-4 h-100 d-flex flex-column">
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div class="entity-avatar" style="background: rgba(168, 85, 247, 0.15); color: var(--cyber-purple); border: 1px solid rgba(168, 85, 247, 0.4);">
+          <i class="bi bi-vector-pen"></i>
+        </div>
+        <span class="badge badge-cyber badge-purple">Module 04</span>
+      </div>
+      <h5 class="card-title-cyber mb-2">Authentication & Signatures</h5>
+      <p class="text-muted flex-grow-1 small">
+        Hands-on real cryptographic signing with RSA-PSS and SHA-256 using Python's standard cryptography engine. Try modifying bytes in-flight to trigger verification failures.
+      </p>
+      <a href="{{ url_for('signatures_page') }}" class="btn btn-cyber btn-cyber-outline mt-2 w-100">
+        Test RSA Signatures <i class="bi bi-arrow-right ms-auto"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Card 5: Protected Diffie-Hellman -->
+  <div class="col-md-6 col-xl-4">
+    <div class="cyber-card p-4 h-100 d-flex flex-column">
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div class="entity-avatar" style="background: rgba(16, 185, 129, 0.15); color: var(--cyber-emerald); border: 1px solid rgba(16, 185, 129, 0.4);">
+          <i class="bi bi-shield-check"></i>
+        </div>
+        <span class="badge badge-cyber badge-emerald">Module 05</span>
+      </div>
+      <h5 class="card-title-cyber mb-2 text-success">Secure Key Exchange</h5>
+      <p class="text-muted flex-grow-1 small">
+        Authenticated Diffie–Hellman in action: public values are authenticated and verified before key derivation. Eve's substitution attempt is rejected immediately.
+      </p>
+      <a href="{{ url_for('protected_dh_page') }}" class="btn btn-cyber btn-cyber-emerald mt-2 w-100">
+        Run Authenticated DH <i class="bi bi-arrow-right ms-auto"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Card 6: Security Comparison Matrix -->
+  <div class="col-md-6 col-xl-4">
+    <div class="cyber-card p-4 h-100 d-flex flex-column">
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div class="entity-avatar" style="background: rgba(59, 130, 246, 0.15); color: var(--cyber-blue); border: 1px solid rgba(59, 130, 246, 0.4);">
+          <i class="bi bi-table"></i>
+        </div>
+        <span class="badge badge-cyber badge-cyan">Module 06</span>
+      </div>
+      <h5 class="card-title-cyber mb-2">Security Comparison</h5>
+      <p class="text-muted flex-grow-1 small">
+        Compare Basic DH, Authenticated DH, DH+Signatures, DH+PKI, and modern TLS 1.3 across Security, Authentication, Performance, Key Management, and Scalability.
+      </p>
+      <a href="{{ url_for('comparison_page') }}" class="btn btn-cyber btn-cyber-outline mt-2 w-100">
+        View Comparison Table <i class="bi bi-arrow-right ms-auto"></i>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Academic Demonstration Path Guide -->
+<div class="row">
+  <div class="col-12">
+    <div class="cyber-card p-4">
+      <h5 class="card-title-cyber mb-3">
+        <i class="bi bi-mortarboard-fill text-warning"></i> Faculty Evaluation Demonstration Guide
+      </h5>
+      <div class="row g-3">
+        <div class="col-md-3">
+          <div class="p-3 rounded bg-dark border border-secondary h-100">
+            <span class="badge badge-cyber badge-cyan mb-2">Step 1: Normal DH</span>
+            <p class="small text-muted mb-0">Show mathematical shared secret equivalence ($K_A = K_B = 2$) using preset $p=23, g=5$.</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="p-3 rounded bg-dark border border-secondary h-100">
+            <span class="badge badge-cyber badge-crimson mb-2">Step 2: MITM Exploit</span>
+            <p class="small text-muted mb-0">Demonstrate Eve substituting public values, decrypting Alice's message, and altering it for Bob.</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="p-3 rounded bg-dark border border-secondary h-100">
+            <span class="badge badge-cyber badge-purple mb-2">Step 3: RSA Signatures</span>
+            <p class="small text-muted mb-0">Sign public parameters and demonstrate that any byte alteration invalidates cryptographic proof.</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="p-3 rounded bg-dark border border-secondary h-100">
+            <span class="badge badge-cyber badge-emerald mb-2">Step 4: TLS 1.3 Rec</span>
+            <p class="small text-muted mb-0">Present comparative trade-offs and explain why Ephemeral DH + PKI in TLS 1.3 is the gold standard.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

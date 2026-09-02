@@ -1,0 +1,252 @@
+{% extends 'base.html' %}
+
+{% block title %}Man-in-the-Middle (MITM) Attack Simulation{% endblock %}
+
+{% block content %}
+<div class="row align-items-center mb-4">
+  <div class="col-lg-8">
+    <div class="d-flex align-items-center gap-2 mb-2">
+      <span class="badge badge-cyber badge-crimson">Module 02</span>
+      <span class="badge badge-cyber badge-amber">Active Exploitation</span>
+    </div>
+    <h2 class="fw-bold text-white mb-1">Man-in-the-Middle Attack Simulation</h2>
+    <p class="text-muted mb-0">Demonstration of how an unauthenticated Diffie–Hellman exchange is completely compromised by Eve.</p>
+  </div>
+  <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+    <button id="btnExecuteMITM" class="btn btn-cyber btn-cyber-crimson me-2">
+      <i class="bi bi-radioactive"></i> Start MITM Attack
+    </button>
+    <button id="btnResetMITM" class="btn btn-cyber btn-cyber-outline">
+      <i class="bi bi-arrow-counterclockwise"></i> Reset
+    </button>
+  </div>
+</div>
+
+<!-- Alert Banner: MITM Success & Explanation (Section 9) -->
+<div id="mitmAlertBanner" class="danger-banner mb-4">
+  <div class="d-flex align-items-start gap-3">
+    <i class="bi bi-exclamation-octagon-fill text-danger fs-2"></i>
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <h5 class="text-danger fw-bold mb-0">MITM ATTACK SUCCESSFUL</h5>
+        <span class="badge badge-cyber badge-crimson">Channel Fully Hijacked</span>
+      </div>
+      <p class="text-light mb-1">
+        <strong>The original Diffie–Hellman exchange does not authenticate the public values, allowing an attacker to substitute their own public values.</strong>
+      </p>
+      <p class="text-muted small mb-0">
+        Alice established a secret key with Eve ($K_{AE}$), while Bob established a separate secret key with Eve ($K_{BE}$). 
+        Alice and Bob believe they are communicating securely, but neither shares a direct key ($K_{Alice} \neq K_{Bob}$).
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Attack Visual Topology Flow (Section 9) -->
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="cyber-card p-4">
+      <h5 class="card-title-cyber mb-3">
+        <i class="bi bi-diagram-3-fill text-danger"></i> Active Interception Topology: Alice &rarr; Eve &rarr; Bob
+      </h5>
+
+      <div class="row g-4 text-center align-items-stretch">
+        <!-- Alice Node -->
+        <div class="col-lg-4">
+          <div class="entity-box entity-alice h-100">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div class="d-flex align-items-center gap-2">
+                <div class="entity-avatar mb-0" style="width: 40px; height: 40px; font-size: 1.2rem;">
+                  <i class="bi bi-person-fill"></i>
+                </div>
+                <h5 class="text-white fw-bold mb-0">Alice</h5>
+              </div>
+              <span class="badge badge-cyber badge-cyan">Victim A</span>
+            </div>
+
+            <div class="text-start small">
+              <div class="mb-1"><span class="text-muted">Private Key:</span> <code class="text-warning" id="mitmAlice_a">a = 6</code></div>
+              <div class="mb-1"><span class="text-muted">Original Sent Value:</span> <code class="text-info" id="mitmAlice_A">A = 8</code></div>
+              <div class="mb-1"><span class="text-muted">Received Public Value:</span> <code class="text-danger fw-bold" id="mitmAlice_Recv">B_Eve = 13</code> <span class="badge badge-sm badge-cyber badge-crimson">Substituted</span></div>
+              <hr class="border-secondary my-2">
+              <div><span class="text-muted">Computed Shared Key:</span></div>
+              <div class="math-block py-1 px-2 my-1 text-danger fw-bold" id="mitmAlice_Key">
+                K_Alice = (B_Eve)^a mod p = 13^6 mod 23 = <span class="fs-6">12</span>
+              </div>
+              <small class="text-dim">Alice thinks 12 is shared with Bob!</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Eve Attacker Node -->
+        <div class="col-lg-4">
+          <div class="entity-box entity-eve h-100 shadow-lg" style="border: 2px solid var(--cyber-crimson); box-shadow: 0 0 25px rgba(244, 63, 94, 0.3);">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div class="d-flex align-items-center gap-2">
+                <div class="entity-avatar mb-0" style="width: 40px; height: 40px; font-size: 1.2rem;">
+                  <i class="bi bi-incognito"></i>
+                </div>
+                <h5 class="text-danger fw-bold mb-0">Eve (Attacker)</h5>
+              </div>
+              <span class="badge badge-cyber badge-crimson">Active MITM</span>
+            </div>
+
+            <!-- Packet Flow Direction Visualizer -->
+            <div class="p-2 rounded bg-black border border-danger mb-3 text-start small">
+              <div class="text-danger fw-bold mb-1"><i class="bi bi-arrow-left-right"></i> Intercept & Substitute:</div>
+              <div class="text-light">1. Alice sends <code>A = 8</code> &rarr; <span class="text-danger fw-bold">Eve intercepts</span>.</div>
+              <div class="text-light">2. Eve transmits <code>A_Eve = 17</code> to Bob.</div>
+              <div class="text-light">3. Bob sends <code>B = 19</code> &rarr; <span class="text-danger fw-bold">Eve intercepts</span>.</div>
+              <div class="text-light">4. Eve transmits <code>B_Eve = 13</code> to Alice.</div>
+            </div>
+
+            <div class="text-start small">
+              <div class="row g-2 mb-2">
+                <div class="col-6">
+                  <span class="text-muted">Eve Private (Alice):</span>
+                  <code class="text-warning d-block" id="mitmEve_eBob">e_2 = 9</code>
+                </div>
+                <div class="col-6">
+                  <span class="text-muted">Eve Private (Bob):</span>
+                  <code class="text-warning d-block" id="mitmEve_e">e_1 = 7</code>
+                </div>
+              </div>
+              <div class="math-block py-1 px-2 my-1 text-danger small">
+                Key with Alice: K_EA = A^e_2 mod p = 8^9 mod 23 = <span class="fw-bold text-white">12</span><br>
+                Key with Bob: K_EB = B^e_1 mod p = 19^7 mod 23 = <span class="fw-bold text-white">18</span>
+              </div>
+              <small class="text-warning"><i class="bi bi-unlock-fill"></i> Eve can decrypt & modify traffic in both directions!</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bob Node -->
+        <div class="col-lg-4">
+          <div class="entity-box entity-bob h-100">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div class="d-flex align-items-center gap-2">
+                <div class="entity-avatar mb-0" style="width: 40px; height: 40px; font-size: 1.2rem;">
+                  <i class="bi bi-person-fill"></i>
+                </div>
+                <h5 class="text-white fw-bold mb-0">Bob</h5>
+              </div>
+              <span class="badge badge-cyber badge-emerald">Victim B</span>
+            </div>
+
+            <div class="text-start small">
+              <div class="mb-1"><span class="text-muted">Private Key:</span> <code class="text-warning" id="mitmBob_b">b = 15</code></div>
+              <div class="mb-1"><span class="text-muted">Original Sent Value:</span> <code class="text-info" id="mitmBob_B">B = 19</code></div>
+              <div class="mb-1"><span class="text-muted">Received Public Value:</span> <code class="text-danger fw-bold" id="mitmBob_Recv">A_Eve = 17</code> <span class="badge badge-sm badge-cyber badge-crimson">Substituted</span></div>
+              <hr class="border-secondary my-2">
+              <div><span class="text-muted">Computed Shared Key:</span></div>
+              <div class="math-block py-1 px-2 my-1 text-danger fw-bold" id="mitmBob_Key">
+                K_Bob = (A_Eve)^b mod p = 17^15 mod 23 = <span class="fs-6">18</span>
+              </div>
+              <small class="text-dim">Bob thinks 18 is shared with Alice!</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Key Comparison & Discrepancy Matrix -->
+<div class="row g-4 mb-4">
+  <div class="col-lg-5">
+    <div class="cyber-card p-4 h-100">
+      <h5 class="card-title-cyber mb-3">
+        <i class="bi bi-key text-warning"></i> Key Asymmetry Proof
+      </h5>
+      <p class="text-muted small">
+        In normal Diffie–Hellman, Alice and Bob calculate the exact same secret. In this MITM attack:
+      </p>
+
+      <div class="p-3 rounded bg-black border border-secondary mb-3">
+        <div class="d-flex justify-content-between mb-2">
+          <span class="text-light">Alice's Secret Key (K_Alice):</span>
+          <span class="badge badge-cyber badge-cyan fs-6" id="compAliceKey">12</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+          <span class="text-light">Bob's Secret Key (K_Bob):</span>
+          <span class="badge badge-cyber badge-emerald fs-6" id="compBobKey">18</span>
+        </div>
+        <hr class="border-secondary my-2">
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="text-danger fw-bold">Alice Key == Bob Key?</span>
+          <span class="badge badge-cyber badge-crimson fs-6" id="compMatchBadge"><i class="bi bi-x-circle"></i> FALSE (12 &ne; 18)</span>
+        </div>
+      </div>
+
+      <div class="p-3 rounded bg-dark border border-secondary">
+        <div class="d-flex justify-content-between mb-1 small">
+          <span class="text-muted">Eve's Key with Alice (K_EA):</span>
+          <span class="text-info fw-bold" id="compEveAliceKey">12 (Matches Alice)</span>
+        </div>
+        <div class="d-flex justify-content-between small">
+          <span class="text-muted">Eve's Key with Bob (K_EB):</span>
+          <span class="text-success fw-bold" id="compEveBobKey">18 (Matches Bob)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Message Eavesdropping & Tampering Interactive Console -->
+  <div class="col-lg-7">
+    <div class="cyber-card p-4 h-100">
+      <h5 class="card-title-cyber mb-3">
+        <i class="bi bi-chat-left-dots text-info"></i> Live Packet Interception & Tampering Demo
+      </h5>
+      <p class="text-muted small">
+        Observe how Eve decrypts Alice's ciphertext, alters the payload, and re-encrypts it for Bob.
+      </p>
+
+      <!-- Stage 1: Alice Message -->
+      <div class="mb-3">
+        <label class="form-label text-muted small">1. Alice sends plaintext confidential message to Bob:</label>
+        <div class="input-group">
+          <input type="text" id="msgAliceInput" class="form-control form-control-cyber" value="Wire transfer $1,000 to Bob">
+          <button id="btnTransmitMsg" class="btn btn-cyber btn-cyber-cyan">
+            <i class="bi bi-send-fill"></i> Transmit
+          </button>
+        </div>
+      </div>
+
+      <!-- Stage 2: In-Flight Ciphertext -->
+      <div class="p-3 rounded bg-black border border-secondary mb-3 small">
+        <div class="text-dim mb-1"><i class="bi bi-lock-fill text-info"></i> Alice's In-Flight Ciphertext (Encrypted with K_Alice=12):</div>
+        <div class="font-monospace text-info text-break" id="dispAliceCipher">WwoSBA8VEA0fCwoB...</div>
+      </div>
+
+      <!-- Stage 3: Eve Intercepts & Modifies -->
+      <div class="p-3 rounded mb-3 small" style="background: rgba(40, 15, 25, 0.8); border: 1px solid var(--cyber-crimson);">
+        <div class="text-danger fw-bold mb-1"><i class="bi bi-incognito"></i> Eve's Interception Console:</div>
+        <div class="text-light mb-2">Decrypted Plaintext: <code class="text-white bg-dark p-1 rounded" id="dispEveDecrypted">Wire transfer $1,000 to Bob</code></div>
+        
+        <label class="form-label text-danger small mb-1">Eve alters the message before forwarding to Bob:</label>
+        <div class="input-group input-group-sm">
+          <input type="text" id="msgEveTampered" class="form-control form-control-cyber text-danger" value="Wire transfer $100,000 to Eve's Off-Shore Account">
+          <button id="btnEveForward" class="btn btn-cyber btn-cyber-crimson">
+            <i class="bi bi-forward-fill"></i> Re-encrypt & Forward
+          </button>
+        </div>
+      </div>
+
+      <!-- Stage 4: Bob Receives -->
+      <div class="p-3 rounded bg-black border border-secondary small">
+        <div class="text-dim mb-1"><i class="bi bi-inbox-fill text-success"></i> Bob Receives & Decrypts with K_Bob=18:</div>
+        <div class="font-monospace text-warning fw-bold fs-6 text-break" id="dispBobReceived">
+          Wire transfer $100,000 to Eve's Off-Shore Account
+        </div>
+        <div class="text-danger mt-1 small">
+          <i class="bi bi-exclamation-triangle"></i> Bob has no idea the message was forged because the key decrypted cleanly!
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/mitm.js') }}"></script>
+{% endblock %}

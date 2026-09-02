@@ -1,0 +1,255 @@
+{% extends 'base.html' %}
+
+{% block title %}Countermeasure Comparison & Evaluation{% endblock %}
+
+{% block content %}
+<div class="row align-items-center mb-4">
+  <div class="col-lg-8">
+    <div class="d-flex align-items-center gap-2 mb-2">
+      <span class="badge badge-cyber badge-cyan">Module 07</span>
+      <span class="badge badge-cyber badge-purple">Comparative Evaluation</span>
+    </div>
+    <h2 class="fw-bold text-white mb-1">Cryptographic Countermeasure Comparison</h2>
+    <p class="text-muted mb-0">Systematic qualitative evaluation of key exchange architectures across security, performance, and operational criteria.</p>
+  </div>
+  <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+    <a href="{{ url_for('recommendation_page') }}" class="btn btn-cyber btn-cyber-cyan">
+      <i class="bi bi-award"></i> View Recommended Architecture
+    </a>
+  </div>
+</div>
+
+<!-- Evaluation Matrix Notice -->
+<div class="info-banner mb-4">
+  <div class="d-flex align-items-center gap-2">
+    <i class="bi bi-info-circle-fill text-info fs-4"></i>
+    <div>
+      <span class="text-white fw-bold">Academic Assessment Notice:</span>
+      <span class="text-light small">
+        These ratings represent educational qualitative assessments for comparative analysis in Network Security coursework, not formal hardware benchmarks.
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- Section 16 Visual Scoring Matrix Table -->
+<div class="row mb-5">
+  <div class="col-12">
+    <div class="cyber-card p-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="card-title-cyber mb-0">
+          <i class="bi bi-table text-info"></i> Security & Operational Evaluation Matrix
+        </h5>
+        <span class="badge badge-cyber badge-emerald">5 Architectural Paradigms</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="cyber-table">
+          <thead>
+            <tr>
+              <th style="width: 20%;">Evaluation Criterion</th>
+              <th style="width: 16%;">1. Basic DH</th>
+              <th style="width: 16%;">2. Authenticated DH</th>
+              <th style="width: 16%;">3. DH + Signatures</th>
+              <th style="width: 16%;">4. DH + PKI</th>
+              <th style="width: 16%;">5. TLS 1.3 (Modern)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="fw-bold text-white"><i class="bi bi-shield-check text-cyan me-2"></i>Security</td>
+              <td><span class="badge badge-cyber badge-amber">Medium</span></td>
+              <td><span class="badge badge-cyber badge-cyan">High</span></td>
+              <td><span class="badge badge-cyber badge-cyan">High</span></td>
+              <td><span class="badge badge-cyber badge-emerald">Very High</span></td>
+              <td><span class="badge badge-cyber badge-emerald">Very High</span></td>
+            </tr>
+            <tr>
+              <td class="fw-bold text-white"><i class="bi bi-person-check text-purple me-2"></i>Authentication</td>
+              <td><span class="badge badge-cyber badge-crimson">Low (None)</span></td>
+              <td><span class="badge badge-cyber badge-cyan">High</span></td>
+              <td><span class="badge badge-cyber badge-cyan">High</span></td>
+              <td><span class="badge badge-cyber badge-emerald">Very High</span></td>
+              <td><span class="badge badge-cyber badge-emerald">Very High</span></td>
+            </tr>
+            <tr>
+              <td class="fw-bold text-white"><i class="bi bi-key text-warning me-2"></i>Key Management</td>
+              <td><span class="badge badge-cyber badge-cyan">Low (Trivial)</span></td>
+              <td><span class="badge badge-cyber badge-amber">Medium</span></td>
+              <td><span class="badge badge-cyber badge-amber">Medium</span></td>
+              <td><span class="badge badge-cyber badge-purple">High (Complex)</span></td>
+              <td><span class="badge badge-cyber badge-purple">High (PKI-based)</span></td>
+            </tr>
+            <tr>
+              <td class="fw-bold text-white"><i class="bi bi-lightning-charge text-emerald me-2"></i>Performance</td>
+              <td><span class="badge badge-cyber badge-emerald">High</span></td>
+              <td><span class="badge badge-cyber badge-emerald">High</span></td>
+              <td><span class="badge badge-cyber badge-amber">Medium</span></td>
+              <td><span class="badge badge-cyber badge-amber">Medium</span></td>
+              <td><span class="badge badge-cyber badge-emerald">High (1-RTT)</span></td>
+            </tr>
+            <tr>
+              <td class="fw-bold text-white"><i class="bi bi-arrow-repeat text-cyan me-2"></i>Reliability</td>
+              <td><span class="badge badge-cyber badge-amber">Medium</span></td>
+              <td><span class="badge badge-cyber badge-cyan">High</span></td>
+              <td><span class="badge badge-cyber badge-cyan">High</span></td>
+              <td><span class="badge badge-cyber badge-emerald">Very High</span></td>
+              <td><span class="badge badge-cyber badge-emerald">Very High</span></td>
+            </tr>
+            <tr>
+              <td class="fw-bold text-white"><i class="bi bi-globe text-cyan me-2"></i>Scalability</td>
+              <td><span class="badge badge-cyber badge-amber">Medium</span></td>
+              <td><span class="badge badge-cyber badge-cyan">High</span></td>
+              <td><span class="badge badge-cyber badge-cyan">High</span></td>
+              <td><span class="badge badge-cyber badge-emerald">Very High</span></td>
+              <td><span class="badge badge-cyber badge-emerald">Very High</span></td>
+            </tr>
+            <tr>
+              <td class="fw-bold text-white"><i class="bi bi-incognito text-danger me-2"></i>MITM Protection</td>
+              <td><span class="badge badge-cyber badge-crimson">Low (Vulnerable)</span></td>
+              <td><span class="badge badge-cyber badge-cyan">High</span></td>
+              <td><span class="badge badge-cyber badge-cyan">High</span></td>
+              <td><span class="badge badge-cyber badge-emerald">Very High</span></td>
+              <td><span class="badge badge-cyber badge-emerald">Very High</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Detailed Breakdown Cards for Each Approach -->
+<h4 class="text-white fw-bold mb-3"><i class="bi bi-layers text-cyan"></i> In-Depth Architectural Profiles</h4>
+<div class="row g-4">
+  <!-- Approach 1 -->
+  <div class="col-lg-4">
+    <div class="cyber-card p-4 h-100 d-flex flex-column">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="text-white fw-bold mb-0">1. Basic Diffie–Hellman</h5>
+        <span class="badge badge-cyber badge-crimson">Vulnerable</span>
+      </div>
+      <small class="text-dim mb-2 font-monospace">RFC 2631 / Diffie-Hellman 1976</small>
+      <p class="text-muted small flex-grow-1">
+        Enables two parties to create a secret over an open wire. Because neither party proves identity, an active attacker on the network path can easily substitute public parameters.
+      </p>
+      <div class="p-2 rounded bg-black border border-secondary small mb-2">
+        <span class="text-success fw-bold d-block"><i class="bi bi-plus-circle"></i> Advantages:</span>
+        <ul class="mb-1 ps-3 text-light">
+          <li>No prior trust relationship or PKI needed</li>
+          <li>Minimal computational overhead</li>
+        </ul>
+        <span class="text-danger fw-bold d-block"><i class="bi bi-dash-circle"></i> Critical Flaws:</span>
+        <ul class="mb-0 ps-3 text-light">
+          <li>Completely vulnerable to MITM substitution</li>
+          <li>No entity authentication whatsoever</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Approach 2 -->
+  <div class="col-lg-4">
+    <div class="cyber-card p-4 h-100 d-flex flex-column">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="text-white fw-bold mb-0">2. Authenticated DH</h5>
+        <span class="badge badge-cyber badge-cyan">Station-to-Station</span>
+      </div>
+      <small class="text-dim mb-2 font-monospace">STS Protocol (Diffie et al., 1992)</small>
+      <p class="text-muted small flex-grow-1">
+        Integrates digital signatures inside an encrypted handshake envelope using the newly derived DH key, proving that the entity signing the exchange actually established the key.
+      </p>
+      <div class="p-2 rounded bg-black border border-secondary small mb-2">
+        <span class="text-success fw-bold d-block"><i class="bi bi-plus-circle"></i> Advantages:</span>
+        <ul class="mb-1 ps-3 text-light">
+          <li>Eliminates active MITM eavesdropping</li>
+          <li>Provides mutual authentication & Perfect Forward Secrecy</li>
+        </ul>
+        <span class="text-danger fw-bold d-block"><i class="bi bi-dash-circle"></i> Limitations:</span>
+        <ul class="mb-0 ps-3 text-light">
+          <li>Requires trusted public-key distribution</li>
+          <li>Vulnerable to identity misbinding if poorly implemented</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Approach 3 -->
+  <div class="col-lg-4">
+    <div class="cyber-card p-4 h-100 d-flex flex-column">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="text-white fw-bold mb-0">3. DH + Digital Signatures</h5>
+        <span class="badge badge-cyber badge-purple">RSA / ECDSA Signing</span>
+      </div>
+      <small class="text-dim mb-2 font-monospace">Signed Parameter Exchange</small>
+      <p class="text-muted small flex-grow-1">
+        The initiator and responder cryptographically sign ephemeral DH public shares ($A, B$) using their long-term asymmetric private keys. Any byte modified by Eve fails signature checks.
+      </p>
+      <div class="p-2 rounded bg-black border border-secondary small mb-2">
+        <span class="text-success fw-bold d-block"><i class="bi bi-plus-circle"></i> Advantages:</span>
+        <ul class="mb-1 ps-3 text-light">
+          <li>Immediate mathematical tamper detection</li>
+          <li>Cryptographic non-repudiation</li>
+        </ul>
+        <span class="text-danger fw-bold d-block"><i class="bi bi-dash-circle"></i> Limitations:</span>
+        <ul class="mb-0 ps-3 text-light">
+          <li>Requires pre-existing public key verification channel</li>
+          <li>Asymmetric signing introduces latency</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Approach 4 -->
+  <div class="col-lg-6">
+    <div class="cyber-card p-4 h-100 d-flex flex-column">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="text-white fw-bold mb-0">4. DH + Digital Certificates / PKI</h5>
+        <span class="badge badge-cyber badge-emerald">X.509 Trust Chain</span>
+      </div>
+      <small class="text-dim mb-2 font-monospace">ITU-T X.509 Standard</small>
+      <p class="text-muted small flex-grow-1">
+        Solves key distribution at global scale. Public signing keys are wrapped into digitally signed X.509 certificates endorsed by hierarchical Certification Authorities (CAs). Clients verify certificates against trusted root stores.
+      </p>
+      <div class="p-2 rounded bg-black border border-secondary small mb-2">
+        <span class="text-success fw-bold d-block"><i class="bi bi-plus-circle"></i> Advantages:</span>
+        <ul class="mb-1 ps-3 text-light">
+          <li>Scales securely to billions of Internet nodes without prior pairwise contact</li>
+          <li>Standardized revocation checking via CRL and OCSP stapling</li>
+        </ul>
+        <span class="text-danger fw-bold d-block"><i class="bi bi-dash-circle"></i> Limitations:</span>
+        <ul class="mb-0 ps-3 text-light">
+          <li>Root CA compromise threatens entire trust domain</li>
+          <li>Certificate expiration and management overhead</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Approach 5 -->
+  <div class="col-lg-6">
+    <div class="cyber-card p-4 h-100 d-flex flex-column" style="border: 2px solid var(--cyber-cyan); box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="text-cyan fw-bold mb-0"><i class="bi bi-star-fill text-warning"></i> 5. Modern TLS 1.3 Key Exchange</h5>
+        <span class="badge badge-cyber badge-cyan">Gold Standard</span>
+      </div>
+      <small class="text-dim mb-2 font-monospace">IETF RFC 8446</small>
+      <p class="text-muted small flex-grow-1">
+        The modern backbone of secure Internet transport (HTTPS). Mandates Ephemeral Diffie-Hellman (ECDHE with X25519 or P-256) combined with X.509 PKI certificate verification. Handshake completes in just 1 round-trip (1-RTT).
+      </p>
+      <div class="p-2 rounded bg-black border border-secondary small mb-2">
+        <span class="text-success fw-bold d-block"><i class="bi bi-plus-circle"></i> Advantages:</span>
+        <ul class="mb-1 ps-3 text-light">
+          <li>Guaranteed Perfect Forward Secrecy (ephemeral keys discarded after session)</li>
+          <li>Handshake encryption prevents metadata snooping</li>
+          <li>Eliminated all insecure legacy ciphers (RSA key exchange, SHA-1, RC4 removed)</li>
+        </ul>
+        <span class="text-danger fw-bold d-block"><i class="bi bi-dash-circle"></i> Limitations:</span>
+        <ul class="mb-0 ps-3 text-light">
+          <li>Requires modern cryptographic libraries on both endpoints</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

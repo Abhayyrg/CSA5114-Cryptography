@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+
+{% block title %}Attack Detection & Fingerprinting{% endblock %}
+
+{% block content %}
+<div class="row align-items-center mb-4">
+  <div class="col-lg-8">
+    <div class="d-flex align-items-center gap-2 mb-2">
+      <span class="badge badge-cyber badge-amber">Module 03</span>
+      <span class="badge badge-cyber badge-cyan">Defense Mechanisms</span>
+    </div>
+    <h2 class="fw-bold text-white mb-1">Attack Detection & Cryptographic Fingerprinting</h2>
+    <p class="text-muted mb-0">Discovering how active MITM parameter substitutions are identified and flagged before data compromise.</p>
+  </div>
+  <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+    <a href="{{ url_for('signatures_page') }}" class="btn btn-cyber btn-cyber-cyan me-2">
+      <i class="bi bi-vector-pen"></i> Digital Signatures
+    </a>
+    <a href="{{ url_for('protected_dh_page') }}" class="btn btn-cyber btn-cyber-emerald">
+      <i class="bi bi-shield-check"></i> Protected DH
+    </a>
+  </div>
+</div>
+
+<!-- Interactive Fingerprint Verification Lab (Section 10) -->
+<div class="row g-4 mb-4">
+  <div class="col-lg-7">
+    <div class="cyber-card p-4 h-100">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="card-title-cyber mb-0">
+          <i class="bi bi-fingerprint text-warning"></i> Key Fingerprint Verification Simulator
+        </h5>
+        <span class="badge badge-cyber badge-cyan">SHA-256 Hash Representation</span>
+      </div>
+      <p class="text-muted small">
+        A cryptographic key fingerprint is a compact hash of a public key or parameter. Communicating parties compare fingerprints (via an out-of-band channel like a phone call, secure QR code, or published directory) to verify authenticity.
+      </p>
+
+      <!-- Preset Example Controls from Section 10 -->
+      <div class="d-flex gap-2 mb-3 flex-wrap">
+        <button id="btnPresetNormal" class="btn btn-sm btn-cyber btn-cyber-outline">
+          <i class="bi bi-check2-circle"></i> Load Matching Preset (AB:12...)
+        </button>
+        <button id="btnPresetMismatch" class="btn btn-sm btn-cyber btn-cyber-crimson">
+          <i class="bi bi-exclamation-triangle"></i> Load Mismatch Preset (91:AA...)
+        </button>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label text-muted small">Expected Alice Public Value / Public Key (Trusted Reference):</label>
+        <input type="text" id="fpInputExpected" class="form-control form-control-cyber" value="Alice_DH_Public_Value:A=8|p=23|g=5">
+      </div>
+
+      <div class="mb-3">
+        <div class="d-flex justify-content-between">
+          <label class="form-label text-muted small">Received Public Value at Bob's Terminal:</label>
+          <div class="form-check form-switch small">
+            <input class="form-check-input" type="checkbox" role="switch" id="switchTamperFP">
+            <label class="form-check-label text-danger" for="switchTamperFP">Simulate Eve MITM Substitution</label>
+          </div>
+        </div>
+        <input type="text" id="fpInputReceived" class="form-control form-control-cyber" value="Alice_DH_Public_Value:A=8|p=23|g=5">
+      </div>
+
+      <!-- Fingerprint Comparison Cards -->
+      <div class="row g-2 mb-3">
+        <div class="col-md-6">
+          <div class="p-3 rounded bg-black border border-secondary">
+            <small class="text-muted d-block mb-1">Expected Fingerprint (Trusted Channel):</small>
+            <code class="text-cyan font-monospace fw-bold d-block text-break" id="dispExpectedFP">
+              AB:12:CD:34:EF:56
+            </code>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="p-3 rounded bg-black border border-secondary" id="boxReceivedFP">
+            <small class="text-muted d-block mb-1">Received Fingerprint (In-Flight Packet):</small>
+            <code class="text-cyan font-monospace fw-bold d-block text-break" id="dispReceivedFP">
+              AB:12:CD:34:EF:56
+            </code>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detection Result Banner -->
+      <div id="detectionVerdictBanner" class="success-banner py-2 px-3">
+        <div class="d-flex align-items-center gap-2">
+          <i id="verdictIcon" class="bi bi-check-circle-fill text-success fs-4"></i>
+          <div>
+            <h6 id="verdictTitle" class="text-white fw-bold mb-0">Authentication Successful</h6>
+            <small id="verdictDetail" class="text-light">Fingerprints match exactly. Public parameters have not been tampered with.</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Attack Detection Methodologies Overview (Section 10 Seven Pillars) -->
+  <div class="col-lg-5">
+    <div class="cyber-card p-4 h-100">
+      <h5 class="card-title-cyber mb-3">
+        <i class="bi bi-shield-lock text-info"></i> 7 Essential MITM Countermeasures
+      </h5>
+      <div class="accordion accordion-flush" id="accordionDetection">
+        <!-- 1. Public-Key Authentication -->
+        <div class="accordion-item bg-transparent border-secondary">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed bg-transparent text-light py-2 px-0" type="button" data-bs-toggle="collapse" data-bs-target="#col1">
+              <span class="badge badge-cyber badge-cyan me-2">1</span> Public-Key Authentication
+            </button>
+          </h2>
+          <div id="col1" class="accordion-collapse collapse" data-bs-parent="#accordionDetection">
+            <div class="accordion-body text-dim small px-0">
+              Binds communicating entities to verified asymmetric keypairs. The sender proves possession of a private key without revealing it.
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Digital Signatures -->
+        <div class="accordion-item bg-transparent border-secondary">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed bg-transparent text-light py-2 px-0" type="button" data-bs-toggle="collapse" data-bs-target="#col2">
+              <span class="badge badge-cyber badge-purple me-2">2</span> Digital Signatures
+            </button>
+          </h2>
+          <div id="col2" class="accordion-collapse collapse" data-bs-parent="#accordionDetection">
+            <div class="accordion-body text-dim small px-0">
+              Alice signs her ephemeral DH public value ($A$) with her private signing key. Bob verifies it with Alice's public key; if Eve modifies $A$, signature verification fails.
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Digital Certificates -->
+        <div class="accordion-item bg-transparent border-secondary">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed bg-transparent text-light py-2 px-0" type="button" data-bs-toggle="collapse" data-bs-target="#col3">
+              <span class="badge badge-cyber badge-cyan me-2">3</span> Digital Certificates (X.509)
+            </button>
+          </h2>
+          <div id="col3" class="accordion-collapse collapse" data-bs-parent="#accordionDetection">
+            <div class="accordion-body text-dim small px-0">
+              Electronic credentials binding a domain identity (e.g., <code>bank.com</code>) to a public key, signed by a trusted Certification Authority (CA).
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Public Key Infrastructure (PKI) -->
+        <div class="accordion-item bg-transparent border-secondary">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed bg-transparent text-light py-2 px-0" type="button" data-bs-toggle="collapse" data-bs-target="#col4">
+              <span class="badge badge-cyber badge-emerald me-2">4</span> Public Key Infrastructure (PKI)
+            </button>
+          </h2>
+          <div id="col4" class="accordion-collapse collapse" data-bs-parent="#accordionDetection">
+            <div class="accordion-body text-dim small px-0">
+              The hierarchical ecosystem of Root CAs, Intermediate CAs, registration authorities, and revocation lists that enables worldwide trust without direct pre-shared secrets.
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Certificate Validation -->
+        <div class="accordion-item bg-transparent border-secondary">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed bg-transparent text-light py-2 px-0" type="button" data-bs-toggle="collapse" data-bs-target="#col5">
+              <span class="badge badge-cyber badge-amber me-2">5</span> Certificate Validation & Trust Chains
+            </button>
+          </h2>
+          <div id="col5" class="accordion-collapse collapse" data-bs-parent="#accordionDetection">
+            <div class="accordion-body text-dim small px-0">
+              Clients verify that the server's certificate is unexpired, issued by a trusted Root in the client's store, not revoked via OCSP/CRL, and matches the requested hostname.
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. Key Fingerprints -->
+        <div class="accordion-item bg-transparent border-secondary">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed bg-transparent text-light py-2 px-0" type="button" data-bs-toggle="collapse" data-bs-target="#col6">
+              <span class="badge badge-cyber badge-cyan me-2">6</span> Key Fingerprints (SSH / Out-of-Band)
+            </button>
+          </h2>
+          <div id="col6" class="accordion-collapse collapse" data-bs-parent="#accordionDetection">
+            <div class="accordion-body text-dim small px-0">
+              Cryptographic hashes displayed in human-readable hex/visual art (used extensively in SSH host verification, Signal safety numbers, and PGP keyservers).
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. Authenticated Diffie-Hellman -->
+        <div class="accordion-item bg-transparent border-secondary">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed bg-transparent text-light py-2 px-0" type="button" data-bs-toggle="collapse" data-bs-target="#col7">
+              <span class="badge badge-cyber badge-emerald me-2">7</span> Authenticated Diffie–Hellman (STS / TLS)
+            </button>
+          </h2>
+          <div id="col7" class="accordion-collapse collapse" data-bs-parent="#accordionDetection">
+            <div class="accordion-body text-dim small px-0">
+              Combines Diffie-Hellman ephemeral key exchange with reciprocal digital signatures or certificate validation, preventing active MITM interception while delivering Forward Secrecy.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/detection.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block title %}About & Assignment Information{% endblock %}
+
+{% block content %}
+<div class="row align-items-center mb-4">
+  <div class="col-lg-8">
+    <div class="d-flex align-items-center gap-2 mb-2">
+      <span class="badge badge-cyber badge-cyan">Module 10</span>
+      <span class="badge badge-cyber badge-purple">Academic Documentation</span>
+    </div>
+    <h2 class="fw-bold text-white mb-1">About & Assignment Information</h2>
+    <p class="text-muted mb-0">Project documentation, curricular alignment, technical specification, and academic bibliography.</p>
+  </div>
+  <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+    <a href="{{ url_for('index') }}" class="btn btn-cyber btn-cyber-cyan">
+      <i class="bi bi-speedometer2"></i> Back to Dashboard
+    </a>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <!-- Assignment Overview Card -->
+  <div class="col-lg-7">
+    <div class="cyber-card p-4 h-100">
+      <h5 class="card-title-cyber mb-3">
+        <i class="bi bi-journal-text text-info"></i> Assignment Specification
+      </h5>
+
+      <table class="table table-borderless text-light small mb-3">
+        <tbody>
+          <tr>
+            <td class="text-muted fw-bold" style="width: 28%;">Project Title:</td>
+            <td class="text-white fw-bold">Evaluation of Diffie–Hellman Key Exchange and Protection Against Man-in-the-Middle Attacks</td>
+          </tr>
+          <tr>
+            <td class="text-muted fw-bold">Course:</td>
+            <td>Network Security / Cryptography & Information Assurance</td>
+          </tr>
+          <tr>
+            <td class="text-muted fw-bold">Demonstration Focus:</td>
+            <td>Diffie-Hellman Key Exchange, MITM Vulnerability, RSA Digital Signatures, PKI, and Modern TLS 1.3 Architecture</td>
+          </tr>
+          <tr>
+            <td class="text-muted fw-bold">Technical Stack:</td>
+            <td>Python 3.11, Flask 3.0, Cryptography 42.0 (RSA-PSS), HTML5, CSS3, JavaScript (ES6), Bootstrap 5</td>
+          </tr>
+          <tr>
+            <td class="text-muted fw-bold">Database:</td>
+            <td>Zero database dependencies (lightweight, state-free educational runner)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h6 class="text-white fw-bold mb-2">Project Objectives Fulfilled:</h6>
+      <ul class="text-muted small ps-3 mb-0">
+        <li class="mb-1"><strong class="text-light">Normal DH Exchange:</strong> Interactive step-by-step modular exponentiation ($g^a \bmod p$, $g^b \bmod p$) with dynamic and custom parameters.</li>
+        <li class="mb-1"><strong class="text-light">Active MITM Attack:</strong> Eve intercepting and substituting values ($A_E, B_E$) creating asymmetric secrets ($K_{AE} \neq K_{BE}$) and live message tampering.</li>
+        <li class="mb-1"><strong class="text-light">Attack Detection:</strong> Real SHA-256 fingerprint verification comparing expected vs received parameters.</li>
+        <li class="mb-1"><strong class="text-light">Digital Signatures:</strong> Genuine RSA-2048 signing with PSS padding and SHA-256 with live tamper invalidation.</li>
+        <li class="mb-1"><strong class="text-light">Protected DH Protocol:</strong> Authenticated Diffie-Hellman flow demonstrating that signature mismatches immediately halt key derivation.</li>
+        <li class="mb-1"><strong class="text-light">Evaluation Matrix:</strong> Qualitative 7-criteria comparative assessment across 5 architectural paradigms.</li>
+        <li><strong class="text-light">Architecture Blueprint:</strong> TLS 1.3 modern recommended architecture isolating the attacker outside the trust boundary.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Disclaimer & Grading Evaluation Checklist -->
+  <div class="col-lg-5">
+    <div class="cyber-card p-4 h-100">
+      <!-- Academic Disclaimer (Section 1) -->
+      <div class="p-3 rounded mb-4" style="background: rgba(245, 158, 11, 0.12); border: 1px solid var(--cyber-amber);">
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <i class="bi bi-shield-exclamation text-warning fs-5"></i>
+          <h6 class="text-warning fw-bold mb-0">Academic Demonstration Disclaimer</h6>
+        </div>
+        <p class="text-light small mb-0">
+          This is an academic demonstration tool designed for educational visualization of network security principles, <strong>NOT</strong> a production security system. Classroom parameters (e.g., $p=23$) are intentionally small for human verification. Real-world systems use at least 2048-bit MODP or 256-bit elliptic curves.
+        </p>
+      </div>
+
+      <!-- Evaluation Rubric Checklist -->
+      <h6 class="text-white fw-bold mb-2"><i class="bi bi-check2-square text-emerald"></i> Evaluation Rubric Checklist</h6>
+      <div class="list-group list-group-flush bg-transparent small">
+        <div class="list-group-item bg-transparent text-light border-secondary px-0 py-1">
+          <i class="bi bi-check-circle-fill text-success me-2"></i> Mathematical DH implementation with primality validation
+        </div>
+        <div class="list-group-item bg-transparent text-light border-secondary px-0 py-1">
+          <i class="bi bi-check-circle-fill text-success me-2"></i> Reproducible MITM substitution showing $K_A \neq K_B$
+        </div>
+        <div class="list-group-item bg-transparent text-light border-secondary px-0 py-1">
+          <i class="bi bi-check-circle-fill text-success me-2"></i> Real established cryptographic signatures (RSA-PSS)
+        </div>
+        <div class="list-group-item bg-transparent text-light border-secondary px-0 py-1">
+          <i class="bi bi-check-circle-fill text-success me-2"></i> Interactive tamper detection simulator
+        </div>
+        <div class="list-group-item bg-transparent text-light border-secondary px-0 py-1">
+          <i class="bi bi-check-circle-fill text-success me-2"></i> Comprehensive 5-approach countermeasure matrix
+        </div>
+        <div class="list-group-item bg-transparent text-light border-secondary px-0 py-1">
+          <i class="bi bi-check-circle-fill text-success me-2"></i> Responsive cybersecurity UI with zero page reloads needed
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Academic References Bibliography -->
+<div class="row">
+  <div class="col-12">
+    <div class="cyber-card p-4">
+      <h5 class="card-title-cyber mb-3">
+        <i class="bi bi-book text-cyan"></i> Academic References & Standards
+      </h5>
+      <ol class="text-muted small ps-3 mb-0">
+        <li class="mb-2">
+          <strong>Diffie, W., & Hellman, M. (1976).</strong> <em>New Directions in Cryptography.</em> IEEE Transactions on Information Theory, 22(6), 644-654.
+        </li>
+        <li class="mb-2">
+          <strong>Diffie, W., van Oorschot, P. C., & Wiener, M. J. (1992).</strong> <em>Authentication and Authenticated Key Exchanges.</em> Designs, Codes and Cryptography, 2(2), 107-125. (Station-to-Station Protocol).
+        </li>
+        <li class="mb-2">
+          <strong>Rescorla, E. (2018).</strong> <em>The Transport Layer Security (TLS) Protocol Version 1.3.</em> RFC 8446, Internet Engineering Task Force (IETF).
+        </li>
+        <li class="mb-2">
+          <strong>Kivinen, T., & Kojo, M. (2003).</strong> <em>More Modular Exponential (MODP) Diffie-Hellman groups for Internet Key Exchange (IKE).</em> RFC 3526.
+        </li>
+        <li class="mb-2">
+          <strong>ITU-T. (2019).</strong> <em>Information technology - Open Systems Interconnection - The Directory: Public-key and attribute certificate frameworks.</em> Recommendation ITU-T X.509.
+        </li>
+        <li>
+          <strong>Bernstein, D. J. (2006).</strong> <em>Curve25519: new Diffie-Hellman speed records.</em> Public Key Cryptography - PKC 2006, Springer, 207-228.
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+{% endblock %}

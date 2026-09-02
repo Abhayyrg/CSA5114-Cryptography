@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% block title %}Security Analysis: Diffie–Hellman & MITM Vulnerability{% endblock %}
+
+{% block content %}
+<div class="row align-items-center mb-4">
+  <div class="col-lg-8">
+    <div class="d-flex align-items-center gap-2 mb-2">
+      <span class="badge badge-cyber badge-cyan">Module 08</span>
+      <span class="badge badge-cyber badge-amber">Theoretical & Practical Analysis</span>
+    </div>
+    <h2 class="fw-bold text-white mb-1">In-Depth Security Analysis</h2>
+    <p class="text-muted mb-0">Rigorous examination of the mathematical foundation, advantages, structural limitations, and attack vectors of Diffie–Hellman.</p>
+  </div>
+  <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+    <a href="{{ url_for('recommendation_page') }}" class="btn btn-cyber btn-cyber-emerald">
+      <i class="bi bi-arrow-right-circle"></i> Recommended Architecture
+    </a>
+  </div>
+</div>
+
+<!-- Section 14 Core Advantages vs Limitations Grid -->
+<div class="row g-4 mb-4">
+  <!-- Advantages -->
+  <div class="col-lg-6">
+    <div class="cyber-card p-4 h-100">
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <i class="bi bi-shield-check text-success fs-3"></i>
+        <div>
+          <h5 class="text-white fw-bold mb-0">Cryptographic Advantages of Diffie–Hellman</h5>
+          <small class="text-muted">Why DH revolutionized public-key cryptography in 1976</small>
+        </div>
+      </div>
+
+      <div class="list-group list-group-flush bg-transparent">
+        <div class="list-group-item bg-transparent border-secondary px-0">
+          <h6 class="text-info fw-bold mb-1"><i class="bi bi-check-circle-fill me-2 text-success"></i>No Direct Transmission of Secret Key</h6>
+          <p class="text-muted small mb-0">
+            Unlike symmetric key schemes requiring secure physical courier distribution, Diffie-Hellman generates the shared secret at each endpoint purely from public values. The secret key never travels over the wire.
+          </p>
+        </div>
+
+        <div class="list-group-item bg-transparent border-secondary px-0">
+          <h6 class="text-info fw-bold mb-1"><i class="bi bi-check-circle-fill me-2 text-success"></i>Key Establishment Over Insecure Networks</h6>
+          <p class="text-muted small mb-0">
+            Passive eavesdroppers observing the wire only record public values ($g, p, A, B$). Computing the secret $K$ requires solving the discrete logarithm of $A$ or $B$, which is computationally infeasible for sufficiently large primes.
+          </p>
+        </div>
+
+        <div class="list-group-item bg-transparent border-secondary px-0">
+          <h6 class="text-info fw-bold mb-1"><i class="bi bi-check-circle-fill me-2 text-success"></i>Perfect Forward Secrecy (PFS) via Ephemeral Keys</h6>
+          <p class="text-muted small mb-0">
+            When implemented with ephemeral keys (DHE / ECDHE), unique private values ($a, b$) are generated per session and immediately discarded from memory. If long-term server identity keys are compromised in the future, past recorded sessions cannot be decrypted retroactively.
+          </p>
+        </div>
+
+        <div class="list-group-item bg-transparent border-secondary px-0">
+          <h6 class="text-info fw-bold mb-1"><i class="bi bi-check-circle-fill me-2 text-success"></i>Mathematical Symmetry & Flexibility</h6>
+          <p class="text-muted small mb-0">
+            Both parties perform identical mathematical exponentiations: $(g^b)^a \equiv (g^a)^b \pmod p$. Can be computed over modular integer groups (MODP) or elliptic curve groups (ECDH) for extreme efficiency.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Limitations & Vulnerabilities -->
+  <div class="col-lg-6">
+    <div class="cyber-card p-4 h-100" style="border-color: rgba(244, 63, 94, 0.4);">
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <i class="bi bi-exclamation-triangle-fill text-danger fs-3"></i>
+        <div>
+          <h5 class="text-danger fw-bold mb-0">Critical Limitations & Vulnerabilities</h5>
+          <small class="text-muted">Inherent flaws in unauthenticated Diffie–Hellman</small>
+        </div>
+      </div>
+
+      <div class="list-group list-group-flush bg-transparent">
+        <div class="list-group-item bg-transparent border-secondary px-0">
+          <h6 class="text-danger fw-bold mb-1"><i class="bi bi-x-circle-fill me-2"></i>Complete Lack of Authentication</h6>
+          <p class="text-muted small mb-0">
+            Basic Diffie–Hellman exchanges mathematical values without any identity verification. Alice has no mathematical guarantee that public value $B$ came from Bob rather than an attacker.
+          </p>
+        </div>
+
+        <div class="list-group-item bg-transparent border-secondary px-0">
+          <h6 class="text-danger fw-bold mb-1"><i class="bi bi-x-circle-fill me-2"></i>Fatal Vulnerability to Active MITM Exploits</h6>
+          <p class="text-muted small mb-0">
+            An attacker (Eve) on the routing path can intercept $A$ and $B$, replace them with $A_E$ and $B_E$, and split the conversation into two separate encrypted channels, giving Eve full plaintext visibility and tampering power.
+          </p>
+        </div>
+
+        <div class="list-group-item bg-transparent border-secondary px-0">
+          <h6 class="text-danger fw-bold mb-1"><i class="bi bi-x-circle-fill me-2"></i>Parameter Weaknesses & Small Subgroup Attacks</h6>
+          <p class="text-muted small mb-0">
+            If non-safe primes or unverified generators are chosen, malicious actors can force the public value into a small subgroup of order $q$, leaking bits of the victim's private key (e.g., Logjam attack / CVE-2015-4000).
+          </p>
+        </div>
+
+        <div class="list-group-item bg-transparent border-secondary px-0">
+          <h6 class="text-danger fw-bold mb-1"><i class="bi bi-x-circle-fill me-2"></i>Vulnerability to Quantum Computing (Shor's Algorithm)</h6>
+          <p class="text-muted small mb-0">
+            Both finite-field DH and Elliptic Curve DH rely on the hardness of the discrete logarithm. A fault-tolerant quantum computer running Shor's algorithm can solve discrete logs in polynomial time $O((\log N)^3)$, rendering classical DH completely obsolete.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Detailed Mathematical Breakdown of MITM Attack (Section 14) -->
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="cyber-card p-4">
+      <h5 class="card-title-cyber mb-3">
+        <i class="bi bi-cpu text-info"></i> Mathematical Mechanics of the Man-in-the-Middle Exploit
+      </h5>
+
+      <p class="text-muted small">
+        Consider the algebraic steps during an active MITM interception over prime field $\mathbb{F}_p$:
+      </p>
+
+      <div class="row g-3">
+        <div class="col-md-4">
+          <div class="p-3 rounded bg-black border border-info h-100">
+            <h6 class="text-cyan fw-bold mb-2">1. Alice &harr; Eve Channel</h6>
+            <div class="font-monospace text-light small">
+              Alice sends: $A = g^a \pmod p$<br>
+              Eve intercepts $A$, sends: $B_E = g^{e_2} \pmod p$<br>
+              Alice computes:<br>
+              $K_{Alice} = (B_E)^a = (g^{e_2})^a = g^{a \cdot e_2} \pmod p$<br>
+              Eve computes:<br>
+              $K_{EA} = A^{e_2} = (g^a)^{e_2} = g^{a \cdot e_2} \pmod p$<br>
+              <span class="text-success fw-bold">&there4; $K_{Alice} \equiv K_{EA}$</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="p-3 rounded bg-black border border-danger h-100">
+            <h6 class="text-danger fw-bold mb-2">2. Eve &harr; Bob Channel</h6>
+            <div class="font-monospace text-light small">
+              Eve sends: $A_E = g^{e_1} \pmod p$<br>
+              Bob receives $A_E$, sends: $B = g^b \pmod p$<br>
+              Eve intercepts $B$<br>
+              Bob computes:<br>
+              $K_{Bob} = (A_E)^b = (g^{e_1})^b = g^{b \cdot e_1} \pmod p$<br>
+              Eve computes:<br>
+              $K_{EB} = B^{e_1} = (g^b)^{e_1} = g^{b \cdot e_1} \pmod p$<br>
+              <span class="text-success fw-bold">&there4; $K_{Bob} \equiv K_{EB}$</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="p-3 rounded bg-black border border-warning h-100">
+            <h6 class="text-warning fw-bold mb-2">3. The Fatal Discrepancy</h6>
+            <div class="font-monospace text-light small">
+              Because $e_1 \neq b$ and $e_2 \neq a$ in general:<br>
+              $g^{a \cdot e_2} \not\equiv g^{b \cdot e_1} \pmod p$<br>
+              <span class="text-danger fw-bold fs-6">&there4; $K_{Alice} \neq K_{Bob}$</span><br><br>
+              Alice and Bob cannot communicate directly. Every packet must be decrypted by Eve using $K_{EA}$, reviewed/altered, and re-encrypted with $K_{EB}$.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

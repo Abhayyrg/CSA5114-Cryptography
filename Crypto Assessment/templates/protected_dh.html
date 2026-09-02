@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+
+{% block title %}Protected / Authenticated Diffie–Hellman{% endblock %}
+
+{% block content %}
+<div class="row align-items-center mb-4">
+  <div class="col-lg-8">
+    <div class="d-flex align-items-center gap-2 mb-2">
+      <span class="badge badge-cyber badge-emerald">Module 05</span>
+      <span class="badge badge-cyber badge-cyan">Station-to-Station / Authenticated DH</span>
+    </div>
+    <h2 class="fw-bold text-white mb-1">Protected Diffie–Hellman Exchange</h2>
+    <p class="text-muted mb-0">Cryptographically authenticating public DH values with reciprocal digital signatures to prevent MITM attacks.</p>
+  </div>
+  <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+    <button id="btnRunAuthDH" class="btn btn-cyber btn-cyber-emerald me-2">
+      <i class="bi bi-shield-check"></i> Execute Protected Exchange
+    </button>
+    <button id="btnToggleEveAuth" class="btn btn-cyber btn-cyber-crimson">
+      <i class="bi bi-radioactive"></i> Simulate Eve Attack
+    </button>
+  </div>
+</div>
+
+<!-- Protocol Flow Explanation (Section 11 7-Step Sequence) -->
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="cyber-card p-4">
+      <h5 class="card-title-cyber mb-3">
+        <i class="bi bi-list-ol text-info"></i> Authenticated Diffie–Hellman Sequence
+      </h5>
+      <div class="row g-2 text-center small">
+        <div class="col-md">
+          <div class="p-2 rounded bg-black border border-secondary h-100" id="flowStep1">
+            <span class="badge badge-cyber badge-cyan mb-1">Step 1</span>
+            <div class="fw-bold text-white">Alice Generates</div>
+            <div class="text-dim">Private a, Public A</div>
+          </div>
+        </div>
+        <div class="col-md">
+          <div class="p-2 rounded bg-black border border-secondary h-100" id="flowStep2">
+            <span class="badge badge-cyber badge-cyan mb-1">Step 2</span>
+            <div class="fw-bold text-white">Bob Generates</div>
+            <div class="text-dim">Private b, Public B</div>
+          </div>
+        </div>
+        <div class="col-md">
+          <div class="p-2 rounded bg-black border border-secondary h-100" id="flowStep3">
+            <span class="badge badge-cyber badge-purple mb-1">Step 3</span>
+            <div class="fw-bold text-white">Alice Signs A</div>
+            <div class="text-dim">RSA-PSS Sign(A)</div>
+          </div>
+        </div>
+        <div class="col-md">
+          <div class="p-2 rounded bg-black border border-secondary h-100" id="flowStep4">
+            <span class="badge badge-cyber badge-purple mb-1">Step 4</span>
+            <div class="fw-bold text-white">Bob Signs B</div>
+            <div class="text-dim">RSA-PSS Sign(B)</div>
+          </div>
+        </div>
+        <div class="col-md">
+          <div class="p-2 rounded bg-black border border-secondary h-100" id="flowStep5">
+            <span class="badge badge-cyber badge-amber mb-1">Step 5</span>
+            <div class="fw-bold text-white">Mutual Verification</div>
+            <div class="text-dim">Verify Signatures</div>
+          </div>
+        </div>
+        <div class="col-md">
+          <div class="p-2 rounded bg-black border border-secondary h-100" id="flowStep6">
+            <span class="badge badge-cyber badge-emerald mb-1">Step 6</span>
+            <div class="fw-bold text-white">Derive Secret</div>
+            <div class="text-dim">Compute K = g^(ab)</div>
+          </div>
+        </div>
+        <div class="col-md">
+          <div class="p-2 rounded bg-black border border-secondary h-100" id="flowStep7">
+            <span class="badge badge-cyber badge-emerald mb-1">Step 7</span>
+            <div class="fw-bold text-white">Secure Traffic</div>
+            <div class="text-dim">Encrypted Session</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Active Exchange Visualizer (Alice, Network/Eve, Bob) -->
+<div class="row g-4 mb-4">
+  <!-- Alice -->
+  <div class="col-lg-4">
+    <div class="entity-box entity-alice h-100">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <div class="d-flex align-items-center gap-2">
+          <div class="entity-avatar mb-0">
+            <i class="bi bi-person-check-fill"></i>
+          </div>
+          <div>
+            <h5 class="text-white fw-bold mb-0">Alice</h5>
+            <span class="badge badge-cyber badge-cyan">Certified Identity</span>
+          </div>
+        </div>
+        <i class="bi bi-patch-check-fill text-info fs-4"></i>
+      </div>
+
+      <div class="small">
+        <div class="mb-2"><span class="text-muted">DH Parameters:</span> <code class="text-info">p = 23, g = 5</code></div>
+        <div class="mb-2"><span class="text-muted">DH Private Key:</span> <code class="text-warning">a = 6</code></div>
+        <div class="mb-2"><span class="text-muted">DH Public Value:</span> <code class="text-info">A = 8</code></div>
+        <div class="mb-2">
+          <span class="text-muted">Alice Digital Signature:</span>
+          <div class="p-2 rounded bg-black border border-secondary text-truncate font-monospace small text-purple" id="dispProtAliceSig">
+            RSA-PSS(Sign_Alice(A=8, p=23, g=5))
+          </div>
+        </div>
+        <div class="mb-2">
+          <span class="text-muted">Bob Signature Verification:</span>
+          <span id="badgeAliceVerifyBob" class="badge badge-cyber badge-emerald float-end">PASSED</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Network Interception / Eve Zone -->
+  <div class="col-lg-4">
+    <div class="channel-box h-100 text-center" id="protChannelBox">
+      <div class="fw-bold text-light mb-1">
+        <i class="bi bi-shield-lock-fill text-success"></i> Authenticated Channel
+      </div>
+      <div id="channelModeText" class="text-emerald small mb-3">Mutual Signatures Enforced</div>
+
+      <!-- Eve Interception Alert Box -->
+      <div id="eveAttackStatusCard" class="p-3 rounded bg-black border border-secondary mb-3 w-100 text-start small">
+        <div class="d-flex align-items-center justify-content-between mb-1">
+          <span class="fw-bold text-white"><i class="bi bi-incognito"></i> Eve Attacker:</span>
+          <span id="eveStatusBadge" class="badge badge-cyber badge-cyan">Passive (Bypassed)</span>
+        </div>
+        <p id="eveStatusDesc" class="text-dim mb-0" style="font-size: 0.78rem;">
+          Eve cannot substitute public value without invalidating Alice's cryptographic signature.
+        </p>
+      </div>
+
+      <div class="w-100">
+        <div class="packet-pill w-100 justify-content-center mb-2" id="pillProtPacketA">
+          <i class="bi bi-arrow-right"></i> Alice: {A=8, Sig_A} <i class="bi bi-arrow-right"></i>
+        </div>
+        <div class="packet-pill w-100 justify-content-center" id="pillProtPacketB" style="border-color: var(--cyber-emerald); color: var(--cyber-emerald);">
+          <i class="bi bi-arrow-left"></i> Bob: {B=19, Sig_B} <i class="bi bi-arrow-left"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bob -->
+  <div class="col-lg-4">
+    <div class="entity-box entity-bob h-100">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <div class="d-flex align-items-center gap-2">
+          <div class="entity-avatar mb-0">
+            <i class="bi bi-person-check-fill"></i>
+          </div>
+          <div>
+            <h5 class="text-white fw-bold mb-0">Bob</h5>
+            <span class="badge badge-cyber badge-emerald">Certified Identity</span>
+          </div>
+        </div>
+        <i class="bi bi-patch-check-fill text-success fs-4"></i>
+      </div>
+
+      <div class="small">
+        <div class="mb-2"><span class="text-muted">DH Parameters:</span> <code class="text-info">p = 23, g = 5</code></div>
+        <div class="mb-2"><span class="text-muted">DH Private Key:</span> <code class="text-warning">b = 15</code></div>
+        <div class="mb-2"><span class="text-muted">DH Public Value:</span> <code class="text-info">B = 19</code></div>
+        <div class="mb-2">
+          <span class="text-muted">Bob Digital Signature:</span>
+          <div class="p-2 rounded bg-black border border-secondary text-truncate font-monospace small text-purple" id="dispProtBobSig">
+            RSA-PSS(Sign_Bob(B=19, p=23, g=5))
+          </div>
+        </div>
+        <div class="mb-2">
+          <span class="text-muted">Alice Signature Verification:</span>
+          <span id="badgeBobVerifyAlice" class="badge badge-cyber badge-emerald float-end">PASSED</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Outcome Alert Banner -->
+<div class="row">
+  <div class="col-12">
+    <div id="protOutcomeBanner" class="success-banner p-3">
+      <div class="d-flex align-items-start gap-3">
+        <i id="protOutcomeIcon" class="bi bi-shield-fill-check text-success fs-3"></i>
+        <div>
+          <h5 id="protOutcomeTitle" class="text-white fw-bold mb-1">Authenticated Diffie–Hellman Successful</h5>
+          <p id="protOutcomeDesc" class="text-light mb-0 small">
+            Both Alice and Bob verified each other's digital signatures on the transmitted public values. 
+            The shared secret <strong>K = 2</strong> was established safely without any risk of MITM tampering.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/protected_dh.js') }}"></script>
+{% endblock %}

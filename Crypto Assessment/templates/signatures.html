@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+
+{% block title %}Digital Signatures & Cryptographic Authentication{% endblock %}
+
+{% block content %}
+<div class="row align-items-center mb-4">
+  <div class="col-lg-8">
+    <div class="d-flex align-items-center gap-2 mb-2">
+      <span class="badge badge-cyber badge-purple">Module 04</span>
+      <span class="badge badge-cyber badge-cyan">Python Cryptography (RSA-PSS)</span>
+    </div>
+    <h2 class="fw-bold text-white mb-1">Digital Signature Demonstration</h2>
+    <p class="text-muted mb-0">Live signing and verification of Diffie–Hellman public values using genuine RSA-2048 and SHA-256.</p>
+  </div>
+  <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+    <a href="{{ url_for('protected_dh_page') }}" class="btn btn-cyber btn-cyber-emerald">
+      <i class="bi bi-shield-check"></i> Next: Protected DH Protocol
+    </a>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <!-- Signing Column (Alice) -->
+  <div class="col-lg-6">
+    <div class="cyber-card p-4 h-100">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="card-title-cyber mb-0" style="color: var(--cyber-purple);">
+          <i class="bi bi-vector-pen"></i> Step 1: Alice Signs Her DH Public Value
+        </h5>
+        <span class="badge badge-cyber badge-purple">RSA-PSS / SHA-256</span>
+      </div>
+
+      <p class="text-muted small">
+        Alice signs her ephemeral DH public value ($A$) using her trusted, private RSA signing key. Anyone with Alice's public certificate can verify the signature, but only Alice can produce it.
+      </p>
+
+      <div class="row g-2 mb-3">
+        <div class="col-4">
+          <label class="form-label text-muted small">Prime (p):</label>
+          <input type="text" id="sigInputP" class="form-control form-control-cyber" value="23" readonly>
+        </div>
+        <div class="col-4">
+          <label class="form-label text-muted small">Generator (g):</label>
+          <input type="text" id="sigInputG" class="form-control form-control-cyber" value="5" readonly>
+        </div>
+        <div class="col-4">
+          <label class="form-label text-muted small">Alice DH Value (A):</label>
+          <input type="text" id="sigInputA" class="form-control form-control-cyber text-info fw-bold" value="8">
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label text-muted small">Formatted Payload Signed:</label>
+        <div class="math-block py-2 px-3 small text-white font-monospace" id="dispPayloadSigned">
+          DH_PUB:8|p:23|g:5
+        </div>
+      </div>
+
+      <div class="d-grid gap-2 mb-3">
+        <button id="btnSignPayload" class="btn btn-cyber btn-cyber-cyan">
+          <i class="bi bi-pen-fill"></i> Generate RSA Digital Signature
+        </button>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label text-muted small">Generated Cryptographic Signature (Base64):</label>
+        <textarea id="dispSignatureB64" class="form-control form-control-cyber font-monospace small" rows="3" readonly style="font-size: 0.78rem;"></textarea>
+      </div>
+
+      <div class="p-2 rounded bg-black border border-secondary small">
+        <div class="text-muted mb-1"><i class="bi bi-key-fill text-warning"></i> Alice Public Key Fingerprint:</div>
+        <code class="text-dim font-monospace text-break">{{ fingerprint }}</code>
+      </div>
+    </div>
+  </div>
+
+  <!-- Verification Column (Bob / Eve MITM) -->
+  <div class="col-lg-6">
+    <div class="cyber-card p-4 h-100">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="card-title-cyber mb-0" style="color: var(--cyber-emerald);">
+          <i class="bi bi-check2-circle"></i> Step 2: Bob Verifies Signature
+        </h5>
+        <span class="badge badge-cyber badge-cyan">Recipient Verification</span>
+      </div>
+
+      <p class="text-muted small">
+        Bob receives the public value and Alice's signature. If an active MITM attacker (Eve) attempts to alter the value, the mathematical verification will instantly fail.
+      </p>
+
+      <div class="mb-3">
+        <label class="form-label text-muted small">Received Value at Bob's Terminal:</label>
+        <div class="input-group">
+          <input type="text" id="verifyReceivedVal" class="form-control form-control-cyber fw-bold text-info" value="8">
+          <button id="btnTamperValue" class="btn btn-cyber btn-cyber-crimson">
+            <i class="bi bi-slash-circle"></i> Tamper Value (Eve MITM)
+          </button>
+          <button id="btnRestoreValue" class="btn btn-cyber btn-cyber-outline">
+            <i class="bi bi-arrow-repeat"></i> Restore
+          </button>
+        </div>
+        <small id="tamperStatusLabel" class="text-dim d-block mt-1">Status: Value is authentic and matches original transmission.</small>
+      </div>
+
+      <div class="d-grid gap-2 mb-3">
+        <button id="btnVerifySig" class="btn btn-cyber btn-cyber-emerald">
+          <i class="bi bi-shield-check"></i> Verify Digital Signature
+        </button>
+      </div>
+
+      <!-- Verification Output Display (Section 12 Required Format) -->
+      <div class="p-3 rounded bg-black border border-secondary mb-3">
+        <div class="mb-2">
+          <span class="text-muted small">Original Message:</span>
+          <div class="font-monospace text-info fw-bold" id="resOriginalMsg">Alice DH Public Value: A = 8</div>
+        </div>
+        <div class="mb-2">
+          <span class="text-muted small">Received Message:</span>
+          <div class="font-monospace text-light fw-bold" id="resReceivedMsg">Received Value: 8</div>
+        </div>
+        <div class="mb-2">
+          <span class="text-muted small">Cryptographic Signature:</span>
+          <div class="font-monospace text-dim small text-truncate" id="resSigPreview">[generated RSA-PSS signature]</div>
+        </div>
+        <hr class="border-secondary my-2">
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="text-light fw-bold">Verification:</span>
+          <span id="badgeVerification" class="badge badge-cyber badge-emerald fs-6">VALID</span>
+        </div>
+      </div>
+
+      <!-- Detailed Explanation Alert -->
+      <div id="sigAlertResult" class="success-banner py-2 px-3">
+        <div class="d-flex align-items-center gap-2">
+          <i id="sigResultIcon" class="bi bi-shield-fill-check text-success fs-4"></i>
+          <div>
+            <h6 id="sigResultTitle" class="text-white fw-bold mb-0">Signature VALID: Authenticity Guaranteed</h6>
+            <small id="sigResultDesc" class="text-light">The public value is proven to originate from Alice and has not been altered in transit.</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Academic Explanation of Cryptographic Signing -->
+<div class="row">
+  <div class="col-12">
+    <div class="cyber-card p-4">
+      <h5 class="card-title-cyber mb-2">
+        <i class="bi bi-mortarboard text-warning"></i> How Asymmetric Cryptography Defeats Man-in-the-Middle Attacks
+      </h5>
+      <p class="text-muted small mb-0">
+        In an unauthenticated DH exchange, Eve can freely fabricate $A_E$ and $B_E$ because no mathematical binding exists between the public values and the identity of the sender. 
+        With <strong>digital signatures</strong>, Alice computes a digital signature $S_A = \text{Sign}_{SK_A}(A)$ using her secret private key $SK_A$. 
+        Because Eve does not possess $SK_A$, if Eve attempts to substitute $A$ with $A_E$, she cannot produce a valid signature for $A_E$. 
+        When Bob attempts verification using Alice's known public key $PK_A$, the signature test fails, and Bob immediately halts communication.
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/signatures.js') }}"></script>
+{% endblock %}

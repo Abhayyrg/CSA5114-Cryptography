@@ -1,0 +1,292 @@
+{% extends 'base.html' %}
+
+{% block title %}Normal Diffie–Hellman Key Exchange{% endblock %}
+
+{% block content %}
+<div class="row align-items-center mb-4">
+  <div class="col-lg-8">
+    <div class="d-flex align-items-center gap-2 mb-2">
+      <span class="badge badge-cyber badge-cyan">Module 01</span>
+      <span class="badge badge-cyber badge-emerald">Fundamental Algorithm</span>
+    </div>
+    <h2 class="fw-bold text-white mb-1">Standard Diffie–Hellman Key Exchange</h2>
+    <p class="text-muted mb-0">Interactive demonstration of symmetric shared secret establishment over an insecure channel.</p>
+  </div>
+  <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+    <button id="btnAutoPlay" class="btn btn-cyber btn-cyber-outline me-2">
+      <i class="bi bi-play-fill"></i> Auto Play Stepper
+    </button>
+    <button id="btnResetDH" class="btn btn-cyber btn-cyber-outline">
+      <i class="bi bi-arrow-counterclockwise"></i> Reset
+    </button>
+  </div>
+</div>
+
+<!-- Important Security Explanation Panel (As required by Section 7) -->
+<div class="info-banner mb-4">
+  <div class="d-flex align-items-start gap-3">
+    <i class="bi bi-info-circle-fill text-info fs-3"></i>
+    <div>
+      <h6 class="text-white fw-bold mb-1">Core Cryptographic Principle & The Unauthenticated Dilemma</h6>
+      <p class="mb-1 text-light">
+        <strong>Diffie–Hellman allows two parties to establish a common secret without directly transmitting the secret key.</strong> 
+        Even an eavesdropper recording all network traffic cannot easily compute the secret without solving the computationally hard <em>Discrete Logarithm Problem</em> ($g^x \equiv Y \pmod p$).
+      </p>
+      <p class="mb-0 text-warning small">
+        <i class="bi bi-exclamation-triangle-fill me-1"></i>
+        <strong>Crucial Security Limitation:</strong> Basic Diffie–Hellman does <em>NOT</em> authenticate the communicating parties. Therefore, <strong>Diffie–Hellman alone is vulnerable to Man-in-the-Middle attacks.</strong>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Parameter Controls & Presets -->
+<div class="row g-4 mb-4">
+  <div class="col-lg-4">
+    <div class="cyber-card p-4 h-100">
+      <h5 class="card-title-cyber mb-3">
+        <i class="bi bi-sliders text-info"></i> Public Parameters
+      </h5>
+
+      <div class="mb-3">
+        <label class="form-label text-muted small">Select Demonstration Preset</label>
+        <select id="presetSelect" class="form-select form-select-cyber">
+          {% for p in presets %}
+          <option value="{{ loop.index0 }}">{{ p.name }}</option>
+          {% endfor %}
+          <option value="custom">Manual Custom Parameters...</option>
+        </select>
+        <small id="presetDesc" class="text-dim d-block mt-1">Classroom standard textbook example, easy to calculate by hand.</small>
+      </div>
+
+      <div class="row g-2 mb-3">
+        <div class="col-6">
+          <label class="form-label text-muted small">Prime Number (p)</label>
+          <input type="number" id="inputP" class="form-control form-control-cyber" value="23" min="5">
+        </div>
+        <div class="col-6">
+          <label class="form-label text-muted small">Generator / Base (g)</label>
+          <input type="number" id="inputG" class="form-control form-control-cyber" value="5" min="2">
+        </div>
+      </div>
+
+      <div class="row g-2 mb-3">
+        <div class="col-6">
+          <label class="form-label text-muted small">Alice Private Key (a)</label>
+          <input type="number" id="inputA" class="form-control form-control-cyber" value="6" min="2">
+        </div>
+        <div class="col-6">
+          <label class="form-label text-muted small">Bob Private Key (b)</label>
+          <input type="number" id="inputB" class="form-control form-control-cyber" value="15" min="2">
+        </div>
+      </div>
+
+      <div class="d-grid gap-2">
+        <button id="btnGenerateParams" class="btn btn-cyber btn-cyber-cyan">
+          <i class="bi bi-arrow-repeat"></i> Randomize Private Keys
+        </button>
+        <button id="btnComputeAll" class="btn btn-cyber btn-cyber-outline">
+          <i class="bi bi-calculator"></i> Calculate Full Exchange
+        </button>
+      </div>
+
+      <div id="validationAlert" class="mt-3 text-danger small d-none"></div>
+    </div>
+  </div>
+
+  <!-- Interactive Visual Stepper Progress -->
+  <div class="col-lg-8">
+    <div class="cyber-card p-4 h-100">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="card-title-cyber mb-0">
+          <i class="bi bi-signpost-split text-info"></i> Step-by-Step Visual Protocol Walkthrough
+        </h5>
+        <div>
+          <span id="stepCounter" class="badge badge-cyber badge-cyan">Step 1 of 8</span>
+        </div>
+      </div>
+
+      <!-- 8-Step Progress Stepper -->
+      <div class="stepper-container">
+        <div class="step-node active" data-step="1">
+          <div class="step-circle">1</div>
+          <div class="step-label">Params</div>
+        </div>
+        <div class="step-node" data-step="2">
+          <div class="step-circle">2</div>
+          <div class="step-label">Alice a</div>
+        </div>
+        <div class="step-node" data-step="3">
+          <div class="step-circle">3</div>
+          <div class="step-label">Bob b</div>
+        </div>
+        <div class="step-node" data-step="4">
+          <div class="step-circle">4</div>
+          <div class="step-label">Calc A</div>
+        </div>
+        <div class="step-node" data-step="5">
+          <div class="step-circle">5</div>
+          <div class="step-label">Calc B</div>
+        </div>
+        <div class="step-node" data-step="6">
+          <div class="step-circle">6</div>
+          <div class="step-label">Alice K</div>
+        </div>
+        <div class="step-node" data-step="7">
+          <div class="step-circle">7</div>
+          <div class="step-label">Bob K</div>
+        </div>
+        <div class="step-node" data-step="8">
+          <div class="step-circle">8</div>
+          <div class="step-label">Verified</div>
+        </div>
+      </div>
+
+      <!-- Active Step Explanation Card -->
+      <div class="p-3 rounded mb-3" style="background: rgba(10, 16, 31, 0.9); border: 1px solid var(--border-color);">
+        <h6 id="activeStepTitle" class="fw-bold text-info mb-1">Step 1: Public Parameters Agreement</h6>
+        <p id="activeStepDesc" class="text-light mb-2 small">Alice and Bob agree on public prime p and primitive root g.</p>
+        <div id="activeStepMath" class="math-block py-2 px-3 small">
+          p = 23, g = 5
+        </div>
+      </div>
+
+      <!-- Navigation buttons for stepper -->
+      <div class="d-flex justify-content-between align-items-center">
+        <button id="btnPrevStep" class="btn btn-cyber btn-cyber-outline" disabled>
+          <i class="bi bi-chevron-left"></i> Previous Step
+        </button>
+        <button id="btnNextStep" class="btn btn-cyber btn-cyber-cyan">
+          Next Step <i class="bi bi-chevron-right"></i>
+        </button>
+      </div>
+
+      <!-- Success Confirmation Banner -->
+      <div id="successBanner" class="success-banner mt-3 d-none">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-check-circle-fill text-success fs-4"></i>
+          <div>
+            <strong class="text-white">Shared Secret Successfully Established!</strong>
+            <div class="text-light small">
+              Alice and Bob both computed identical key: <code class="text-success fw-bold fs-6">K_A = K_B = <span id="verifiedSecretVal">2</span></code>.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Two-Party Exchange Architecture Diagram -->
+<div class="row g-4 mb-4">
+  <!-- Alice Column -->
+  <div class="col-lg-4">
+    <div class="entity-box entity-alice h-100">
+      <div class="d-flex align-items-center gap-3">
+        <div class="entity-avatar">
+          <i class="bi bi-person-fill"></i>
+        </div>
+        <div>
+          <h5 class="text-white fw-bold mb-0">Alice</h5>
+          <span class="badge badge-cyber badge-cyan">Initiator</span>
+        </div>
+      </div>
+
+      <hr class="border-secondary my-3">
+
+      <div class="mb-2 small">
+        <span class="text-muted">Private Secret Key:</span>
+        <span class="float-end font-monospace text-warning fw-bold" id="dispAliceA">a = 6</span>
+      </div>
+      <div class="mb-2 small">
+        <span class="text-muted">Public Value Calculation:</span>
+        <div class="math-block my-1 p-2 small" id="dispAliceCalc">
+          A = g^a mod p<br>
+          A = 5^6 mod 23 = <span class="text-white fw-bold">8</span>
+        </div>
+      </div>
+      <div class="mb-2 small">
+        <span class="text-muted">Received Public Value:</span>
+        <span class="float-end font-monospace text-info" id="dispAliceRecvB">B = 19 (from Bob)</span>
+      </div>
+      <div class="mb-2 small">
+        <span class="text-muted">Derived Shared Secret:</span>
+        <div class="math-block my-1 p-2 small text-success" id="dispAliceSecret">
+          K_A = B^a mod p<br>
+          K_A = 19^6 mod 23 = <span class="math-secret fs-6">2</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Insecure Network Channel -->
+  <div class="col-lg-4">
+    <div class="channel-box h-100 text-center">
+      <div class="fw-bold text-muted mb-2">
+        <i class="bi bi-wifi text-info"></i> Insecure Public Network
+      </div>
+      <small class="text-dim mb-3">Public values transmitted in plaintext</small>
+
+      <div class="my-2 w-100">
+        <div class="packet-pill mb-2 w-100 justify-content-center" id="packetA">
+          <i class="bi bi-arrow-right"></i> Alice sends A = <span id="packetAVal">8</span> <i class="bi bi-arrow-right"></i>
+        </div>
+        <div class="packet-pill w-100 justify-content-center" id="packetB" style="border-color: var(--cyber-emerald); color: var(--cyber-emerald);">
+          <i class="bi bi-arrow-left"></i> Bob sends B = <span id="packetBVal">19</span> <i class="bi bi-arrow-left"></i>
+        </div>
+      </div>
+
+      <div class="mt-3 p-2 rounded bg-dark border border-secondary text-start small">
+        <div class="text-muted fw-bold mb-1"><i class="bi bi-eye"></i> Eavesdropper View:</div>
+        <div class="font-monospace text-dim">p = <span id="obsP">23</span>, g = <span id="obsG">5</span></div>
+        <div class="font-monospace text-dim">A = <span id="obsA">8</span>, B = <span id="obsB">19</span></div>
+        <div class="text-warning mt-1" style="font-size: 0.75rem;">Cannot compute secret without discrete log of A or B.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bob Column -->
+  <div class="col-lg-4">
+    <div class="entity-box entity-bob h-100">
+      <div class="d-flex align-items-center gap-3">
+        <div class="entity-avatar">
+          <i class="bi bi-person-fill"></i>
+        </div>
+        <div>
+          <h5 class="text-white fw-bold mb-0">Bob</h5>
+          <span class="badge badge-cyber badge-emerald">Responder</span>
+        </div>
+      </div>
+
+      <hr class="border-secondary my-3">
+
+      <div class="mb-2 small">
+        <span class="text-muted">Private Secret Key:</span>
+        <span class="float-end font-monospace text-warning fw-bold" id="dispBobB">b = 15</span>
+      </div>
+      <div class="mb-2 small">
+        <span class="text-muted">Public Value Calculation:</span>
+        <div class="math-block my-1 p-2 small" id="dispBobCalc">
+          B = g^b mod p<br>
+          B = 5^15 mod 23 = <span class="text-white fw-bold">19</span>
+        </div>
+      </div>
+      <div class="mb-2 small">
+        <span class="text-muted">Received Public Value:</span>
+        <span class="float-end font-monospace text-info" id="dispBobRecvA">A = 8 (from Alice)</span>
+      </div>
+      <div class="mb-2 small">
+        <span class="text-muted">Derived Shared Secret:</span>
+        <div class="math-block my-1 p-2 small text-success" id="dispBobSecret">
+          K_B = A^b mod p<br>
+          K_B = 8^15 mod 23 = <span class="math-secret fs-6">2</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dh.js') }}"></script>
+{% endblock %}
